@@ -1,0 +1,93 @@
+!pip install TTS==0.22.0
+
+
+from TTS.api import TTS
+import os
+
+tts = TTS(
+    model_name="tts_models/multilingual/multi-dataset/your_tts",
+    progress_bar=True
+)
+
+os.makedirs("outputs", exist_ok=True)
+
+
+
+
+ENGLISH
+
+from TTS.api import TTS
+import os
+
+# Create output folder
+os.makedirs("outputs/en", exist_ok=True)
+
+# Load English multi-speaker model
+tts_en = TTS("tts_models/en/vctk/vits")
+
+# Sentence
+text_en = "This system is generating speech in multiple languages."
+
+# Select speakers (from model)
+speakers = ["p225", "p226", "p227"]  # choose as many as needed
+
+for speaker in speakers:
+    out_file = f"outputs/en/{speaker}.wav"
+    tts_en.tts_to_file(text=text_en, speaker=speaker, file_path=out_file)
+    print("Generated:", out_file)
+
+
+
+
+
+EMBEDDINGS:
+from TTS.api import TTS
+import os
+
+os.makedirs("outputs/eng", exist_ok=True)
+
+tts_en = TTS("tts_models/en/vctk/vits")
+
+speakers = ["p226", "p227", "p228", "p229"]
+
+for spk in speakers:
+    out_file = f"outputs/eng/{spk}.wav"
+    tts_en.tts_to_file(
+        text="This is a sample sentence to extract the speaker characteristics.",
+        speaker=spk,
+        file_path=out_file
+    )
+    print(f"Saved English reference for {spk}: {out_file}")
+
+
+
+
+FRENCH:
+from TTS.api import TTS
+import os
+
+# 1️⃣ Create output folder
+os.makedirs("outputs/fr_multi", exist_ok=True)
+
+# 2️⃣ Load the French-capable multilingual model
+tts_fr = TTS("tts_models/multilingual/multi-dataset/your_tts")  # multi-speaker & multilingual
+
+# 3️⃣ Text to synthesize
+text_fr = "Ce système génère de la parole dans plusieurs langues."
+
+# 4️⃣ List of English reference WAVs we just generated
+ref_speakers = ["p226", "p227", "p228", "p229"]
+
+for spk in ref_speakers:
+    ref_wav = f"outputs/eng/{spk}.wav"  # English reference audio
+    out_file = f"outputs/fr_multi/fr_clone_{spk}.wav"
+    
+    # 5️⃣ Generate French clone using English reference
+    tts_fr.tts_to_file(
+        text=text_fr,
+        speaker_wav=ref_wav,   # reference English voice
+        language="fr-fr",      # French output
+        file_path=out_file
+    )
+    print(f"Generated French clone for {spk}: {out_file}")
+
